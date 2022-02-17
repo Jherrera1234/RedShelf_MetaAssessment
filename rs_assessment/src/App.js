@@ -50,7 +50,7 @@ function App() {
     let indexOfFirst = stri.indexOf('l="') + 3
     let second = stri.indexOf('"', indexOfFirst + 1)
     let indexOfProp = stri.indexOf('y="') + 3
-    let indexOfProp2 = stri.indexOf('"', indexOfProp + 1) - 1
+    let indexOfProp2 = stri.indexOf('"', indexOfProp + 1)
     let arr = []
     let arr2 = []
     for (let i = indexOfFirst; i < second; i++) {
