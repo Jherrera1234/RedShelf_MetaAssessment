@@ -1,12 +1,21 @@
 
 import './App.css';
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import * as React from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
 
 
 function App() {
   const [metaData, setMetaData] = useState()
-  const [metaTagName, setMetaTagName] = useState([])
-  const [metaContent, setMetaContent] = useState([])
+  const [order, setOrder] = useState('asc')
+  const [combinedInfo, setCombinedInfo] = useState([])
 
 
 
@@ -88,7 +97,6 @@ function App() {
     }
     let newStuff1 = arr.join('')
     let newStuff2 = arr2.join('')
-    console.log(newStuff2)
     const match = 'href=';
     const match2 = '">'
     const found = strings.match(match);
@@ -101,14 +109,19 @@ function App() {
     return [newStuff1, newStuff2, strings]
   }
 
+  const combinedData = (tagName, contentInfo) => {
+    return {
+      tagName,
+      contentInfo
+    };
+  }
+
 
 
 
   const handleSubmit = (e) => {
     e.preventDefault()
-
     let dataHolder = metaData
-    console.log(dataHolder)
     let tagArr = []
     let contentArr = []
     let epub3Tags = []
@@ -143,13 +156,135 @@ function App() {
           epub3Content.push(propContent)
         }
       }
-      console.log(contentArr, tagArr)
-      console.log(epub3Content, epub3Tags, dataHolder)
+
     }
+
+
+    if (contentArr.length !== 0) {
+      let rows = []
+      for (let i = 0; i < contentArr.length; i++) {
+        rows.push(combinedData(tagArr[i], contentArr[i]))
+      }
+      rows = rows.sort(function (a, b) {
+        let nameA = a.tagName.toUpperCase()
+        let nameB = b.tagName.toUpperCase()
+        if (nameA < nameB) {
+          return -1
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+
+        return 0;
+      })
+      setCombinedInfo(rows)
+
+
+    } else {
+      let rows = []
+      for (let i = 0; i < epub3Content.length; i++) {
+        rows.push(combinedData(epub3Tags[i], epub3Content[i]))
+      }
+      rows = rows.sort(function (a, b) {
+        let nameA = a.tagName.toUpperCase()
+        let nameB = b.tagName.toUpperCase()
+        if (nameA < nameB) {
+          return -1
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+
+        return 0;
+      })
+      setCombinedInfo(rows)
+    }
+
+
   }
 
 
+  const handleClick = (name) => {
 
+    if (order === 'asc') {
+      setOrder('dsc')
+    } else {
+      setOrder('asc')
+    }
+
+    if (name === 'Tag/Property') {
+      if (order === 'dsc') {
+        let info = combinedInfo
+        info = info.sort(function (a, b) {
+          let nameA = a.tagName.toUpperCase()
+          let nameB = b.tagName.toUpperCase()
+          if (nameA > nameB) {
+            return -1
+          }
+          if (nameA < nameB) {
+            return 1;
+          }
+
+
+          return 0;
+        })
+        setCombinedInfo(info)
+      } else {
+        let info = combinedInfo
+        info = info.sort(function (a, b) {
+          let nameA = a.tagName.toUpperCase()
+          let nameB = b.tagName.toUpperCase()
+          if (nameA < nameB) {
+            return -1
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+
+
+          return 0;
+        })
+        setCombinedInfo(info)
+      }
+    } else {
+
+      if (order === 'dsc') {
+        let info = combinedInfo
+        info = info.sort(function (a, b) {
+          let nameA = a.contentInfo.toUpperCase()
+          let nameB = b.contentInfo.toUpperCase()
+          if (nameA > nameB) {
+            return -1
+          }
+          if (nameA < nameB) {
+            return 1;
+          }
+
+
+          return 0;
+        })
+        setCombinedInfo(info)
+      } else {
+        let info = combinedInfo
+        info = info.sort(function (a, b) {
+          let nameA = a.contentInfo.toUpperCase()
+          let nameB = b.contentInfo.toUpperCase()
+          if (nameA < nameB) {
+            return -1
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+
+
+          return 0;
+        })
+        setCombinedInfo(info)
+      }
+    }
+  }
 
 
 
@@ -163,10 +298,35 @@ function App() {
 
       </form>
 
-      <div className='table-info'>
+      {/* <div className='table-info'>
+        <p>{metaContent[0]}</p>
 
+      </div> */}
 
-      </div>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+          <TableHead>
+            <TableRow>
+              <TableCell ><div onClick={() => { handleClick('Tag/Property') }}>Tag/Property</div></TableCell>
+              <TableCell align='right' ><div onClick={() => { handleClick('Value') }}>Value</div></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {combinedInfo.map((element, index) => (
+              <TableRow
+                key={element.tagName}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {element.tagName}
+                </TableCell>
+                <TableCell align="right">{element.contentInfo}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+      </TableContainer>
     </div>
   );
 }
