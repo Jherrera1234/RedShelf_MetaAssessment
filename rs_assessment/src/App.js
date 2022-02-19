@@ -9,7 +9,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-
+import { createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@emotion/react';
 
 
 function App() {
@@ -21,6 +22,11 @@ function App() {
 
 
 
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+  });
 
   const getTagName = (str) => {
     const match = 'name=';
@@ -298,6 +304,7 @@ function App() {
   return (
     <div className="App">
 
+
       <form className='form-sub' onSubmit={handleSubmit}>
         <label className='input-label' > Please paste meta data into the textbox</label>
         <textarea className='input-text' rows={15} cols={50} onChange={(e) => setMetaData(e.target.value)} />
@@ -305,35 +312,38 @@ function App() {
 
       </form>
 
+
       {/* <div className='table-info'>
         <p>{metaContent[0]}</p>
 
       </div> */}
+      <ThemeProvider theme={darkTheme}>
 
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-          <TableHead>
-            <TableRow>
-              <TableCell ><div onClick={() => { handleClick('Tag/Property') }}>Tag/Property <div>{tagDisplay}</div></div></TableCell>
-              <TableCell align='right' ><div onClick={() => { handleClick('Value') }}>Value <div>{contentDisplay}</div></div></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {combinedInfo.map((element, index) => (
-              <TableRow
-                key={element.tagName}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {element.tagName}
-                </TableCell>
-                <TableCell align="right">{element.contentInfo}</TableCell>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+            <TableHead>
+              <TableRow>
+                <TableCell ><div onClick={() => { handleClick('Tag/Property') }}>Tag/Property <div>{tagDisplay}</div></div></TableCell>
+                <TableCell align='right' ><div onClick={() => { handleClick('Value') }}>Value <div>{contentDisplay}</div></div></TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {combinedInfo.map((element, index) => (
+                <TableRow
+                  key={element.tagName}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {element.tagName}
+                  </TableCell>
+                  <TableCell align="right">{element.contentInfo}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
 
-      </TableContainer>
+        </TableContainer>
+      </ThemeProvider>
     </div>
   );
 }
