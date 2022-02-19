@@ -16,6 +16,8 @@ function App() {
   const [metaData, setMetaData] = useState()
   const [order, setOrder] = useState('asc')
   const [combinedInfo, setCombinedInfo] = useState([])
+  const [tagDisplay, setTagDisplay] = useState('asc')
+  const [contentDisplay, setContentDisplay] = useState('asc')
 
 
 
@@ -51,6 +53,7 @@ function App() {
     string = string.replace('"' + newContent + '"', '')
     return [newContent, string]
   }
+
   const getTagEPUB3 = (stri) => {
     const match = 'rel=';
     const match2 = 'property='
@@ -231,6 +234,7 @@ function App() {
           return 0;
         })
         setCombinedInfo(info)
+        setTagDisplay('dsc')
       } else {
         let info = combinedInfo
         info = info.sort(function (a, b) {
@@ -247,6 +251,7 @@ function App() {
           return 0;
         })
         setCombinedInfo(info)
+        setTagDisplay('asc')
       }
     } else {
 
@@ -266,6 +271,7 @@ function App() {
           return 0;
         })
         setCombinedInfo(info)
+        setContentDisplay('dsc')
       } else {
         let info = combinedInfo
         info = info.sort(function (a, b) {
@@ -282,6 +288,7 @@ function App() {
           return 0;
         })
         setCombinedInfo(info)
+        setContentDisplay('asc')
       }
     }
   }
@@ -307,8 +314,8 @@ function App() {
         <Table sx={{ minWidth: 650 }} aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell ><div onClick={() => { handleClick('Tag/Property') }}>Tag/Property</div></TableCell>
-              <TableCell align='right' ><div onClick={() => { handleClick('Value') }}>Value</div></TableCell>
+              <TableCell ><div onClick={() => { handleClick('Tag/Property') }}>Tag/Property <div>{tagDisplay}</div></div></TableCell>
+              <TableCell align='right' ><div onClick={() => { handleClick('Value') }}>Value <div>{contentDisplay}</div></div></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
