@@ -29,20 +29,32 @@ function App() {
   });
 
   const getTagName = (str) => {
+    // for the epub2 tag names
     const match = 'name=';
     const found = str.match(match);
+    // finds the match of the name= in the meta data string
     let indexOfFirst = str.indexOf('"')
     let second = str.indexOf('"', indexOfFirst + 1)
+    // line 35 and 36 helps find the first few quotation marks in the meta data string
     let arr = []
+    // we create an empty array to push in the string of letters of the tag name
     for (let i = indexOfFirst + 1; i < second; i++) {
 
       arr.push(str[i])
+      // this for loop captures everything inbetween the beginning quotation mark to then ending
     }
     let newStuff = arr.join('')
+    // we then join it all
     str = str.replace(found[0], '')
+    // we delete the name=
     str = str.replace('"' + newStuff + '"', '')
+    // we then delete the tag name and the quotation marks
+    // we need to delete all this data to find the content of the tag names in the next function getContent
+
     return [newStuff, str]
+    // we then return the tag name and new string of the meta data
   }
+
 
   const getContent = (string) => {
     const match = 'content=';
@@ -123,6 +135,7 @@ function App() {
       tagName,
       contentInfo
     };
+    // simply makes an object to hold the data of the meta data to parse it in the table 
   }
 
 
@@ -131,22 +144,32 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault()
     let dataHolder = metaData
+    // once the data is submitted it is put into the meta data state and saved in another variable
     let tagArr = []
     let contentArr = []
+    // the arrays for the epub2 meta data, seperated them in order to distinguish between the data when writing the code
     let epub3Tags = []
     let epub3Content = []
+    // for the epub3 meta data 
     if (dataHolder) {
+      //if the data is submitted and exist the code begins to parse the meta data
       if (dataHolder.includes('name=')) {
+        //if statment is used to distinguish between epub2 and epub3 formats name= correlates to the epub2 format
         while (dataHolder.includes('name=') && dataHolder.includes('content=')) {
-
+          //while loop runs until there is no name= and content= in the metadata
           let tag = getTagName(dataHolder)
+          //goes to the getTagName function
           let tagName = tag[0]
+          // we now have a value that is the tag name of the 
           dataHolder = tag[1]
+          // the new string produced with out the name= and tag name attached to it
           tagArr.push(tagName)
+          // we push the tag name into the tagArr
           let content = getContent(dataHolder)
           let contentInfo = content[0]
           dataHolder = content[1]
           contentArr.push(contentInfo)
+          // same process for content for the tags in the meta data for the epub2 version
 
         }
       } else if (dataHolder.includes('rel=')) {
@@ -163,6 +186,9 @@ function App() {
           dataHolder = contentEpub[2]
           epub3Content.push(hrefContent)
           epub3Content.push(propContent)
+          // this goes through the same process as the epub3 just rel=, property=, href= and "> are used to find the content 
+          //and tag names in the metadata and parse it
+
         }
       }
 
@@ -210,13 +236,14 @@ function App() {
       })
       setCombinedInfo(rows)
     }
-
+    //these 2 if statments sorts the both versions of the meta data (epub2&3) and sorts it by the tag names
+    // goes into the combinedData function to organize the data before sorting
 
   }
 
 
   const handleClick = (name) => {
-
+    // this function is used to give the action of changing the order of the data from ascending to descending and vice versa
     if (order === 'asc') {
       setOrder('dsc')
     } else {
@@ -224,6 +251,8 @@ function App() {
     }
 
     if (name === 'Tag/Property') {
+      //if what is clicked belongs to the tag/property the order of the properties change from descending to ascending
+      // or vice versa and changes the state of the tag display to show on the screen
       if (order === 'dsc') {
         let info = combinedInfo
         info = info.sort(function (a, b) {
@@ -260,7 +289,7 @@ function App() {
         setTagDisplay('asc')
       }
     } else {
-
+      // same process but just for the content information and changing its asortment
       if (order === 'dsc') {
         let info = combinedInfo
         info = info.sort(function (a, b) {
@@ -312,11 +341,6 @@ function App() {
 
       </form>
 
-
-      {/* <div className='table-info'>
-        <p>{metaContent[0]}</p>
-
-      </div> */}
       <ThemeProvider theme={darkTheme}>
 
         <TableContainer component={Paper}>
